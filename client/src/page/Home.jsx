@@ -4,8 +4,9 @@ import { useGlobalContext } from '../context/index.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-  const {contract, walletAddress, setShowAlert} = useGlobalContext()
+  const { contract, walletAddress, setShowAlert, gameData, setErrorMessage } = useGlobalContext()
   const [playerName, setPlayerName] = useState('');
+  const navigate = useNavigate();
 
 
   const handleClick = async () => {
@@ -13,7 +14,7 @@ const Home = () => {
       const playerExists = await contract.isPlayer(walletAddress);
 
       if (!playerExists) {
-        await contract.registerPlayer(playerName, playerName);
+        await contract.registerPlayer(playerName, playerName, { gasLimit: 500000 });
 
         setShowAlert({
           status: true,
@@ -23,42 +24,45 @@ const Home = () => {
 
       }
     } catch (error) {
-      setShowAlert({
-        status: true,
-        type: 'failure',
-        message: "something went wrong",
-      });    }
+      setErrorMessage(error);
+    }
   };
 
   useEffect(() => {
     const checkPlayerToken = async () => {
       const playerExists = await contract.isPlayer(walletAddress);
       const playerTokenExists = await contract.isPlayerToken(walletAddress);
-
       if (playerExists && playerTokenExists) navigate('/create-battle');
     };
 
-    if (contract) checkPlayerToken();
+    if (contract)
+      checkPlayerToken();
   }, [contract]);
+
+  useEffect(() => {
+    if (gameData.activeBattle) {
+      navigate(`/battle/${gameData.activeBattle.name}`);
+    }
+  }, [gameData]);
 
   return (
     <div className='flex flex-col'>
       <CustomInput
-          label="Name"
-          placeHolder="Enter your player name"
-          value={playerName}
-          handleValueChange={setPlayerName}
+        label="Name"
+        placeHolder="Enter your player name"
+        value={playerName}
+        handleValueChange={setPlayerName}
       />
-        <CustomButton
-          title="Register"
-          handleClick={handleClick}
-          restStyles="mt-6"
-        />
+      <CustomButton
+        title="Register"
+        handleClick={handleClick}
+        restStyles="mt-6"
+      />
     </div>
   )
 };
 
-export default PageHOC (
+export default PageHOC(
   Home,
   <>Welcome to Avax Gods <br /> a Web3 NFT Card Game</>,
   <>Connect your wallet to start playing <br /> the ultimate Web3 Battle Card Game</>

@@ -48,7 +48,7 @@ const OnboardModal = () => {
         return (
           <>
             <p className={styles.modalText}>
-              You haven't connected your account to Core Wallet!
+              You haven't connected your account to Wallet!
             </p>
             <CustomButton
               title="Connect Account"
@@ -61,7 +61,7 @@ const OnboardModal = () => {
         return (
           <>
             <p className={styles.modalText}>
-              You're on a different network. Switch to Fuji C-Chain.
+              You're on a different network. Switch to Sepolia.
             </p>
             <CustomButton title="Switch" handleClick={SwitchNetwork} />
           </>
@@ -71,11 +71,11 @@ const OnboardModal = () => {
         return (
           <>
             <p className={styles.modalText}>
-              Oops, you don't have AVAX tokens in your account
+              Oops, you don't have enough tokens in your account
             </p>
             <CustomButton
               title="Grab some test tokens"
-              handleClick={() => window.open('https://faucet.avax.network/', '_blank')}
+              handleClick={() => window.open('https://sepoliafaucet.com/', '_blank')}
             />
           </>
         );
